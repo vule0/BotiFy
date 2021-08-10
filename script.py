@@ -12,30 +12,25 @@ import random
 # password = input('Enter Password: ')
 username = 'vule2003'
 password = 'rrn121517kndV'
-mood = input('Which playlist are you feeling today?\n[A] :^) \n[B] moonlight uh \n[C] sponkbup \n[D] w0w \n[E] oldies \n[F] Random \n[G] Choose a playlist\n[E] Choose a song\n').lower()
+mood = input('Which playlist are you feeling today?\n[A] :^) \n[B] moonlight uh \n[C] sponkbup \n[D] w0w \n[E] oldies \n[F] Random \n[G] Choose a playlist\n[H] Choose a song\n').lower()
 if mood == 'g':
     playlist_choice = str(input('What playlist would you like to hear?\n')).lower()
-if mood == 'e':
+if mood == 'h':
     song_choice = input('What song would you like to hear?\n').lower()
-volume = int(input('What volume would you like the volume at?\n'))
+volume = int((input('What volume would you like the volume at?\n')))
 shuffle = input('Do you want shuffle on or off? \n[A] On [B] Off\n').lower()
-
-
 
 PATH = 'C:\Program Files (x86)\chromedriver.exe'
 
-
 driver = webdriver.Chrome(PATH)
 driver.delete_all_cookies()
-
 driver.get("https://open.spotify.com")
 driver.maximize_window()
 
-
-
 try:
+    # Logs into Spotify Account
     login_button = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "_3f37264be67c8f40fa9f76449afdb4bd-scss._1f2f8feb807c94d2a0a7737b433e19a8-scss")))
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[4]/div/div[2]/div[1]/header/div[4]/button[2]")))
     login_button.click()
     user_field = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "login-username")))
@@ -64,17 +59,15 @@ try:
             time.sleep(2)
             shuffle_button.click()
             print('Shuffle Already On')
+
     if shuffle == 'b':
         if shuffle_checker != 'false':
             shuffle_button.click()
             print('Shuffle Disabled')
 
-
 except:
     driver.quit()
     print('Failed before selecting playlists')
-
-
 
 # Assigns Spotify Playlists to variables
 playlist1 = WebDriverWait(driver, 10).until(
@@ -159,21 +152,20 @@ elif mood == 'g':
         EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, playlist_choice)))
     playlist.click()
     click_play()
-elif mood == 'e':
+elif mood == 'h':
     search_button = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CLASS_NAME, "icon.search-icon")))
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/nav/div[1]/ul/li[2]/a")))
     search_button.click()
 
     search_bar = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CLASS_NAME, "_748c0c69da51ad6d4fc04c047806cd4d-scss.f3fc214b257ae2f1d43d4c594a94497f-scss")))
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/div[1]/header/div[3]/div/div/form/input")))
     search_bar.send_keys(song_choice)
     search_bar.send_keys(Keys.RETURN)
 
     song1 = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CLASS_NAME, "e8ea6a219247d88aa936a012f6227b0d-scss.bddcb131e9b40fa874148a30368d83f8-scss")))
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/div[3]/main/div[2]/div[2]/div/div/div[2]/div/div/div/section[2]/div[2]/div/div/div/div[2]/div[1]")))
     double = ActionChains(driver)
     double.double_click(song1).perform()
-
 
 #Change looping for choosing songs so that the song repeats
 # create another file that stores names of playlists that user can input, then switch playlist variables to the correct name 
