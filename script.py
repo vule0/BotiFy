@@ -12,16 +12,26 @@ import random
 # password = input('Enter Password: ')
 username = 'vule2003'
 password = 'rrn121517kndV'
-mood = input('Which playlist are you feeling today?\n[A] :^) \n[B] moonlight uh \n[C] sponkbup \n[D] w0w \n[E] oldies \n[F] Random \n[G] Choose a song\n').lower()
-shuffle = input('Do you want shuffle on or off? \n[A] On [B] Off\n').lower()
-volume = int(input('What volume would you like the volume at?\n'))
+mood = input('Which playlist are you feeling today?\n[A] :^) \n[B] moonlight uh \n[C] sponkbup \n[D] w0w \n[E] oldies \n[F] Random \n[G] Choose a playlist\n[E] Choose a song\n').lower()
 if mood == 'g':
-    song_choice = input('What song do you want to hear?\n').lower()
-choices = 'ABCDEFG'
-# how does this work
+    playlist_choice = str(input('What playlist would you like to hear?\n')).lower()
+if mood == 'e':
+    song_choice = input('What song would you like to hear?\n').lower()
+volume = int(input('What volume would you like the volume at?\n'))
+shuffle = input('Do you want shuffle on or off? \n[A] On [B] Off\n').lower()
+
+
+
 PATH = 'C:\Program Files (x86)\chromedriver.exe'
+
+
 driver = webdriver.Chrome(PATH)
+driver.delete_all_cookies()
+
 driver.get("https://open.spotify.com")
+driver.maximize_window()
+
+
 
 try:
     login_button = WebDriverWait(driver, 10).until(
@@ -41,34 +51,30 @@ try:
     cookies_notice.click()
 
     # Turns shuffle on/off depending on what is already selected
-    # shuffle_button = WebDriverWait(driver, 10).until(
-        # EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/div[2]/footer/div/div[2]/div/div[1]/div[1]/button[1]")))
-    # actions = ActionChains(driver)
-    # shuffle_checker = shuffle_button.get_attribute('title').lower()
-    # shuffle_checker = shuffle_button.is_selected()
-    # if shuffle == 'a':
-    #     # print(shuffle_checker)
-    #     print(shuffle_checker)
-    #     if shuffle_checker != 'true':
-    #         # actions.click(shuffle_button).perform()
-    #         print('Shuffle Enabled')
-            
-        # elif shuffle_checker == 'true':
-        #     print('Shuffle already enabled')
-        #     pass
+    shuffle_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/div[2]/footer/div/div[2]/div/div[1]/div[1]/button[1]")))
+    shuffle_checker = shuffle_button.get_attribute('aria-checked').lower()
 
-    # elif shuffle == 'b':
-    #     print(shuffle_checker)
-    #     if shuffle_checker != 'false':
-    #         shuffle_button.click()
-    #         print('Shuffle Disabled')
-    #     elif shuffle_checker == 'false':
-    #         print('Shuffle already disabled')
-    #         pass
-    
+    if shuffle == 'a':
+        if shuffle_checker != 'true':
+            shuffle_button.click()
+            print('Shuffle Enabled')
+        if shuffle_checker == 'true':
+            shuffle_button.click()
+            time.sleep(2)
+            shuffle_button.click()
+            print('Shuffle Already On')
+    if shuffle == 'b':
+        if shuffle_checker != 'false':
+            shuffle_button.click()
+            print('Shuffle Disabled')
+
+
 except:
     driver.quit()
     print('Failed before selecting playlists')
+
+
 
 # Assigns Spotify Playlists to variables
 playlist1 = WebDriverWait(driver, 10).until(
@@ -83,19 +89,18 @@ playlist5 = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "oldies")))
 playlists = [playlist1, playlist2, playlist3, playlist4, playlist5]
 
+
 def random_playlist():
     rand_playlist  = random.choice(playlists)
     rand_playlist.click()
 
 def click_play():
-    # driver.implicitly_wait(4)
-    # buttons = driver.find_elements_by_class_name("_8e7d398e09c25b24232d92aac8a15a81-scss.e8b2fe03d4e4726484b879ed8ff6f096-scss")
-    # buttons[1].click()
+    time.sleep(2)
     play_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "/html/body/div[4]/div/div[2]/div[3]/main/div[2]/div[2]/div/div/div[2]/section/div[2]/div[2]/div/button[1]")))
     play_button.click()
     
-
+# Changes Volume Slider
 def volume_changer():
     actions1 = ActionChains(driver)
     actions2 =ActionChains(driver)
@@ -108,8 +113,6 @@ def volume_changer():
     volume_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "/html/body/div[4]/div/div[2]/div[2]/footer/div/div[3]/div/div[3]/div/div/div/button")))
 
-    # print(current_volume.get_attribute('style'))
-    # print(volume_button.get_attribute('aria-label'))
     def get_vol():
         curr_vol = current_volume.get_attribute('style')
         start = curr_vol.find('orm:') + len('orm:')
@@ -130,6 +133,7 @@ def volume_changer():
             actions3.drag_and_drop_by_offset(volume_button, 3, 0).perform()
     actions4.release().perform()
 
+volume_changer()
 
 # Chooses the chosen playlist in mood
 if mood == 'a':
@@ -151,6 +155,11 @@ elif mood == 'f':
     random_playlist()
     click_play()
 elif mood == 'g':
+    playlist = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, playlist_choice)))
+    playlist.click()
+    click_play()
+elif mood == 'e':
     search_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.CLASS_NAME, "icon.search-icon")))
     search_button.click()
@@ -165,9 +174,6 @@ elif mood == 'g':
     double = ActionChains(driver)
     double.double_click(song1).perform()
 
-volume_changer()
 
-#Change looping
-#Fix shuffle to check if shuffle is already on or not, then change it
-#Change volume
+#Change looping for choosing songs so that the song repeats
 # create another file that stores names of playlists that user can input, then switch playlist variables to the correct name 
