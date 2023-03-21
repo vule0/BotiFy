@@ -10,7 +10,7 @@ import random
 
 username = input('Enter Username: ')
 password = input('Enter Password: ')
-mood = input('Which playlist are you feeling today?\n[A] :^) \n[B] moonlight uh \n[C] sponkbup \n[D] w0w \n[E] oldies \n[F] Random \n[G] Choose a playlist\n[H] Choose a song\n').lower()
+mood = input('Which playlist are you feeling today?\n[A] Playlist 1 \n[B] Playlist 2 \n[C] Playlist 3 \n[D] Playlist 4 \n[E] Playlist 5 \n[F] Random \n[G] Choose another playlist\n[H] Choose a song\n').lower()
 if mood == 'g':
     playlist_choice = str(input('What playlist would you like to hear?\n')).lower()
 if mood == 'h':
